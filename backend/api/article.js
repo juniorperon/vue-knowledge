@@ -1,3 +1,5 @@
+const queries = require("./queries");
+
 module.exports = (app) => {
   const { existsOrError, notExistOrError } = app.api.validation;
 
@@ -74,6 +76,20 @@ module.exports = (app) => {
         return res.json(article);
       })
       .catch((err) => res.status(500).send(err));
+  };
+
+  const getByCategory = async (req, res) => {
+    const categoryId = req.params.id;
+    const page = req.query.page || 1;
+    const categories = await app.db.raw(
+      queries.categoryWithChildren,
+      categoryId
+    );
+    const ids = categories.rows.map((c) => c.id);
+
+    app
+      .db({ a: "articles", u: "users" })
+      .select("a.id", "a.name", "a.description", "a.imageUrl");
   };
 
   return { save, remove, get, getById };
