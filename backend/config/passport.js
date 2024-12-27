@@ -13,7 +13,7 @@ module.exports = app => {
     app.db('users').where({id:payload.id}).first().then(user => done(null,user ? {...payload} : false)).catch(err=> done(err,false))
   })
 
-  passport.user(strategy)
+  passport.use(strategy)
 
   return {
     authenticate: () => passport.authenticate('jwt',{session:false})
